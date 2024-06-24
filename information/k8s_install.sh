@@ -96,14 +96,15 @@ systemctl enable kubelet.service
 
 
 #exit root as normal user, comment this out before running this script
-exit
-mkdir -p $HOME/.kube
-sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
-sudo chown $(id -u):$(id -g) $HOME/.kube/config
-#to verify, if kubectl is working or not, run the following command.
-kubectl get pod -A
+# exit
+# mkdir -p $HOME/.kube
+# sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+# sudo chown $(id -u):$(id -g) $HOME/.kube/config
+# #to verify, if kubectl is working or not, run the following command.
+# kubectl get pod -A
 
-#Install CRI,weaver
-kubectl apply -f https://github.com/weaveworks/weave/releases/download/v2.8.1/weave-daemonset-k8s.yaml
-#verify if weave is deployed successfully
-kubectl get pods -A
+# Workng CRI, weaver
+# kubectl apply -f https://github.com/weaveworks/weave/releases/download/v2.8.1/weave-daemonset-k8s.yaml
+# #verify if weave is deployed successfully
+# kubectl get pods -A
+https://docs.tigera.io/calico/latest/getting-started/kubernetes/quickstart
