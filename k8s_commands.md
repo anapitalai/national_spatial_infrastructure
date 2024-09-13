@@ -11,8 +11,8 @@ When installing kubectl minio -plugin, this should match the minio operator vers
 tenant create using minio plugin
 kubectl minio tenant create minio-tenant1 --capacity 20Gi --servers 1 --volumes 1 --namespace minio --storage-class local-path --enable-host-sharing --disable-tls
 
-| Left Aligned | Center Aligned | Right Aligned |
-|:-------------|:---------------:|--------------:|
-| Row 1 Col 1  | Row 1 Col 2    | Row 1 Col 3  |
-| Row 2 Col 1  | Row 2 Col 2    | Row 2 Col 3  |
-| Row 3 Col 1  | Row 3 Col 2    | Row 3 Col 3  |
+| Server | Volume | Capacity  | Total Space |
+|:-------|:------:|----------:|------------:| 
+| 2      |    2   |    10GB   |  40GB       |    
+| 2      |    2   |    5GB    |   20GB      |
+
