@@ -15,4 +15,5 @@ kubectl minio tenant create minio-tenant1 --capacity 20Gi --servers 1 --volumes 
 |:-------|:------:|----------:|------------:| 
 | 2      |    2   |    10GB   |  40GB       |    
 | 2      |    2   |    5GB    |   20GB      |
+| 2      |    1   |    10GB   |   20GB     |
 
