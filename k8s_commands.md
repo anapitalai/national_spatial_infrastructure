@@ -75,7 +75,6 @@ https://github.com/cloudnative-pg/postgis-containers
 export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
 KUBECONFIG=/etc/kubernetes/admin.conf
 
-
 ## pgadmin4
 
 To access this pgAdmin instance, use the following credentials:
@@ -109,16 +108,13 @@ mkdir -p $HOME/.kube
   sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
   sudo chown $(id -u):$(id -g) $HOME/.kube/config
 
-
-
-
 ## get minio operator version
+
 kubectl describe deployment minio-operator -n minio-operator
 
-
 ## minio in docker
-https://kodekloud.com/community/t/setting-up-object-storage-with-minio-with-docker/336624
 
+https://kodekloud.com/community/t/setting-up-object-storage-with-minio-with-docker/336624
 
 docker run \
 -d \
@@ -139,7 +135,6 @@ To access this pgAdmin instance, use the following credentials:
 username: user@pgadmin.com
 password: k4s9Q0ThaPkyutRnr1rsS548r59NAy5g
 
-
 To establish a connection to the database server, you'll need the password for
 the 'app' user. Retrieve it with the following
 command:
@@ -155,6 +150,5 @@ kubectl port-forward deployment/png-nsdi-pgadmin4 8080:80
 Then, navigate to http://localhost:8080 in your browser.
 
 To remove this pgAdmin deployment, execute:
-
 
 kubectl cnpg pgadmin4 png-nsdi --dry-run | kubectl delete -f -
