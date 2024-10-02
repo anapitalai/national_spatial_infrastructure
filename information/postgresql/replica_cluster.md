@@ -63,6 +63,12 @@ metadata:
   name: png-nsdi
 spec:
   instances: 3
+  ## enable asynchronous backup
+  postgresql:
+    syncReplicaElectionConstraint:
+      enabled: true
+      nodeLabelsAntiAffinity:
+      - topology.kubernetes.io/zone  
   imageName: ghcr.io/cloudnative-pg/postgis:16
   ## backup functionality
   primaryUpdateStrategy: unsupervised
