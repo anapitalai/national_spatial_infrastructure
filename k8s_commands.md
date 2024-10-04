@@ -152,3 +152,7 @@ Then, navigate to http://localhost:8080 in your browser.
 To remove this pgAdmin deployment, execute:
 
 kubectl cnpg pgadmin4 png-nsdi --dry-run | kubectl delete -f -
+
+
+## validation
+kubectl apply --dry-run=client -f your-config.yaml
