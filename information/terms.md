@@ -18,7 +18,7 @@
 
 ```mermaid
 graph TD
-    A[Start] --> B{Is it working?}
+    A[client] --> B{HTML}
     B -- Yes --> C[Continue]
     B -- No --> D[Fix it]
     D --> B
