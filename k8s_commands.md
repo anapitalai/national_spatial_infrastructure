@@ -156,3 +156,12 @@ kubectl cnpg pgadmin4 png-nsdi --dry-run | kubectl delete -f -
 
 ## validation
 kubectl apply --dry-run=client -f your-config.yaml
+
+
+
+kubeadm init --cri-socket=unix:///var/run/containerd/containerd.sock --ignore-preflight-errors=NumCPU
+
+
+
+kubeadm join 202.1.32.102:6443 --token swausb.g6nihpb62nuca61e \
+	--discovery-token-ca-cert-hash sha256:7065f0f80b120a28467fef64f1ad928e30af9cf6cace73e0ef93fd0496036ce6 --cri-socket=unix:///var/run/containerd/containerd.sock

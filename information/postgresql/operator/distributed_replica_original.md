@@ -5,29 +5,24 @@ metadata:
   name: png-nsdi-unitech
 spec:
   instances: 3
-  imageName: ghcr.io/cloudnative-pg/postgis:16
-
-
   # Distributed topology configuration
-  externalClusters:
-    - name: png-nsdi-unitech
-      barmanObjectStore:
-        destinationPath: s3://cluster-eu-south/
-        # Additional configuration
-    - name: png-nsdi-sydney
-      barmanObjectStore:
-        destinationPath: s3://cluster-eu-central/
-        # Additional configuration
-
-  # Enable asynchronous backup
+externalClusters:
+  - name: png-nsdi-unitech
+    barmanObjectStore:
+      destinationPath: s3://cluster-eu-south/
+      # Additional configuration
+  - name: png-nsdi-sydney
+    barmanObjectStore:
+      destinationPath: s3://cluster-eu-central/
+      # Additional configuration
+  ## enable asynchronous backup
   postgresql:
     syncReplicaElectionConstraint:
       enabled: true
       nodeLabelsAntiAffinity:
-        - topology.kubernetes.io/zone  
-    
-
-  # Backup functionality
+      - topology.kubernetes.io/zone  
+  imageName: ghcr.io/cloudnative-pg/postgis:16
+  ## backup functionality
   primaryUpdateStrategy: unsupervised
   bootstrap:
     initdb:
@@ -42,40 +37,9 @@ spec:
         - CREATE EXTENSION IF NOT EXISTS postgis_topology;
         - CREATE EXTENSION IF NOT EXISTS fuzzystrmatch;
         - CREATE EXTENSION IF NOT EXISTS postgis_tiger_geocoder;
-        # STAC compliance: create tables and indexes for STAC specification
-        - |
-          CREATE SCHEMA IF NOT EXISTS stac;
-          CREATE TABLE IF NOT EXISTS stac.collections (
-            id TEXT PRIMARY KEY,
-            description TEXT,
-            title TEXT,
-            keywords TEXT[],
-            version TEXT,
-            license TEXT,
-            providers JSONB,
-            extent JSONB,
-            links JSONB,
-            summaries JSONB
-          );
-          CREATE TABLE IF NOT EXISTS stac.items (
-            id TEXT PRIMARY KEY,
-            collection_id TEXT REFERENCES stac.collections(id),
-            geometry JSONB,
-            bbox DOUBLE PRECISION[],
-            properties JSONB,
-            assets JSONB,
-            links JSONB,
-            datetime TIMESTAMP WITH TIME ZONE,
-            created TIMESTAMP WITH TIME ZONE DEFAULT now(),
-            updated TIMESTAMP WITH TIME ZONE DEFAULT now()
-          );
-          CREATE INDEX IF NOT EXISTS idx_stac_items_geom ON stac.items USING GIST (ST_SetSRID(ST_GeomFromGeoJSON(geometry::text), 4326));
-          CREATE INDEX IF NOT EXISTS idx_stac_items_datetime ON stac.items (datetime);
-
   storage:
     size: 2Gi
-
-  # Enable backup
+  ## enable backup
   backup:
     barmanObjectStore:
       destinationPath: s3://202.1.32.102:9000/gps
@@ -89,7 +53,6 @@ spec:
           key: ACCESS_SECRET_KEY
       wal:
         compression: gzip
-
 ---------------------------------------------------------------------
 ## sydney-cluster
 apiVersion: postgresql.cnpg.io/v1
@@ -136,35 +99,6 @@ externalClusters:
         - CREATE EXTENSION IF NOT EXISTS postgis_topology;
         - CREATE EXTENSION IF NOT EXISTS fuzzystrmatch;
         - CREATE EXTENSION IF NOT EXISTS postgis_tiger_geocoder;
-        # STAC compliance: create tables and indexes for STAC specification
-        - |
-          CREATE SCHEMA IF NOT EXISTS stac;
-          CREATE TABLE IF NOT EXISTS stac.collections (
-            id TEXT PRIMARY KEY,
-            description TEXT,
-            title TEXT,
-            keywords TEXT[],
-            version TEXT,
-            license TEXT,
-            providers JSONB,
-            extent JSONB,
-            links JSONB,
-            summaries JSONB
-          );
-          CREATE TABLE IF NOT EXISTS stac.items (
-            id TEXT PRIMARY KEY,
-            collection_id TEXT REFERENCES stac.collections(id),
-            geometry JSONB,
-            bbox DOUBLE PRECISION[],
-            properties JSONB,
-            assets JSONB,
-            links JSONB,
-            datetime TIMESTAMP WITH TIME ZONE,
-            created TIMESTAMP WITH TIME ZONE DEFAULT now(),
-            updated TIMESTAMP WITH TIME ZONE DEFAULT now()
-          );
-          CREATE INDEX IF NOT EXISTS idx_stac_items_geom ON stac.items USING GIST (ST_SetSRID(ST_GeomFromGeoJSON(geometry::text), 4326));
-          CREATE INDEX IF NOT EXISTS idx_stac_items_datetime ON stac.items (datetime);
   storage:
     size: 2Gi
   ## enable backup
