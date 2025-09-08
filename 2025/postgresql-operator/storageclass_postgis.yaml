@@ -1,12 +1,3 @@
-apiVersion: storage.k8s.io/v1
-kind: StorageClass
-metadata:
-  name: nsdi-postgis-storage
-provisioner: rancher.io/local-path
-reclaimPolicy: Delete
-volumeBindingMode: WaitForFirstConsumer
-allowVolumeExpansion: true
----
 apiVersion: postgresql.cnpg.io/v1
 kind: Cluster
 metadata:

@@ -1,0 +1,106 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: postgis-superuser-secret
+stringData:
+  username: postgres
+  password: admin123
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: nsdi-postgis
+spec:
+  instances: 2
+  imageName: ghcr.io/cloudnative-pg/postgis:17
+  storage:
+    size: 5Gi
+    storageClass: local-path
+  superuserSecret:
+    name: postgis-superuser-secret
+  postgresql:
+    parameters:
+      log_statement: ddl
+    pg_hba:
+      - host all all 0.0.0.0/0 md5
+      - host all all ::0/0 md5
+  bootstrap:
+    initdb:
+      postInitTemplateSQL:
+        - CREATE EXTENSION IF NOT EXISTS postgis;
+        - CREATE EXTENSION IF NOT EXISTS postgis_topology;
+        - CREATE EXTENSION IF NOT EXISTS fuzzystrmatch;
+        - CREATE EXTENSION IF NOT EXISTS postgis_tiger_geocoder;
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pgadmin4
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pgadmin4
+  template:
+    metadata:
+      labels:
+        app: pgadmin4
+    spec:
+      containers:
+      - name: pgadmin4
+        image: dpage/pgadmin4:latest
+        env:
+        - name: PGADMIN_DEFAULT_EMAIL
+          value: "admin@domain.com"
+        - name: PGADMIN_DEFAULT_PASSWORD
+          value: "admin123"
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: pgadmin-data
+          mountPath: /var/lib/pgadmin
+      volumes:
+      - name: pgadmin-data
+        emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pgadmin4
+spec:
+  type: NodePort
+  selector:
+    app: pgadmin4
+  ports:
+    - port: 80
+      targetPort: 80
+      nodePort: 30080
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: nsdi-postgis-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: local-path
+  resources:
+    requests:
+      storage: 5Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nsdi-postgis-external
+spec:
+  type: NodePort
+  selector:
+    cnpg.io/cluster: nsdi-postgis
+    role: primary
+  ports:
+    - port: 5432
+      targetPort: 5432
+      nodePort: 30432
+# You can expand this PVC by editing the storage request (e.g., to 10Gi) and applying the change:
+# kubectl edit pvc nsdi-postgis-pvc
+# Then increase the storage value under 'resources.requests.storage'.
